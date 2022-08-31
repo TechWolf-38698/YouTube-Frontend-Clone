@@ -1,0 +1,276 @@
+@import url(./bootstrap.css);
+
+::-webkit-scrollbar {
+  background: transparent;
+  width: 0;
+  transition: 500ms;
+}
+
+::-webkit-scrollbar {
+  transition: 300ms;
+  width: 8px !important;
+}
+
+.MuiDrawer-paper::-webkit-scrollbar {
+  background: transparent;
+  width: 0;
+  transition: 500ms;
+}
+::-webkit-scrollbar-thumb {
+  height: 56px;
+  border-radius: 8px;
+  background-clip: content-box;
+  background-color: #aaa;
+}
+
+.MuiDrawer-paper:hover::-webkit-scrollbar {
+  transition: 300ms;
+  width: 8px !important;
+}
+.MuiDrawer-paper::-webkit-scrollbar-thumb {
+  height: 56px;
+  border-radius: 8px;
+  background-clip: content-box;
+  background-color: #aaa;
+}
+
+a,
+a:hover,
+a:focus {
+  text-decoration: none !important;
+  color: #fff;
+}
+
+.home-video-title {
+  font-weight: bold;
+  font-size: 0.9rem;
+  font-family: "Roboto", "Arial", sans-serif;
+}
+
+.home-channel-name {
+  font-size: 0.7rem;
+  font-weight: bold;
+  display: block;
+  color: #9f9f9f;
+}
+
+.SidebarLink.gray {
+  background-color: gray;
+}
+
+.signin-form-h1 {
+  color: #ccc;
+  padding-bottom: 0;
+  padding-top: 16px;
+  font-family: "Google Sans", "Noto Sans Myanmar UI", arial, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3333;
+  margin-bottom: 0;
+  margin-top: 0;
+  word-break: break-word;
+}
+
+.signin-form-body {
+  height: auto;
+  min-height: 500px;
+  background-color: #212121;
+}
+
+.signin-form-subtitle {
+  color: #ccc;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.1px;
+  line-height: 1.5;
+  padding-bottom: 0;
+  padding-top: 8px;
+}
+
+.myDiv {
+  margin: 48px 40px 36px;
+}
+
+.MuiFormHelperText-root {
+  margin-left: 3px !important;
+  margin-top: 8px !important;
+}
+
+/* Video player */
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  justify-content: center;
+  background-color: black;
+}
+
+.video-container.theater,
+.video-container.full-screen {
+  max-width: initial;
+  width: 100%;
+}
+
+.video-container.theater {
+  max-height: 80vh;
+}
+
+.video-container.full-screen {
+  max-height: 100vh;
+}
+
+#video {
+  width: 100%;
+  max-height: 70vh;
+}
+
+.video-controls-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  color: white;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 150ms ease-in-out;
+}
+
+.video-controls-container::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+  width: 100%;
+  aspect-ratio: 6 / 1;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.video-container:hover .video-controls-container,
+.video-container:focus-within .video-controls-container,
+.video-container.paused .video-controls-container {
+  opacity: 1;
+}
+
+.video-controls-container .controls {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  align-items: center;
+}
+
+.video-controls-container .controls button {
+  background: none;
+  border: none;
+  color: inherit;
+  padding: 0;
+  height: 30px;
+  width: 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 150ms ease-in-out;
+}
+
+.video-controls-container .controls button:hover {
+  opacity: 1;
+}
+
+.video-container.paused .pause-icon {
+  display: none;
+}
+
+.video-container:not(.paused) .play-icon {
+  display: none;
+}
+
+.video-container.theater .tall {
+  display: none;
+}
+
+.video-container:not(.theater) .wide {
+  display: none;
+}
+
+.video-container.full-screen .open {
+  display: none;
+}
+
+.video-container:not(.full-screen) .close {
+  display: none;
+}
+
+.volume-high-icon,
+.volume-low-icon,
+.volume-muted-icon {
+  display: none;
+}
+
+.video-container[data-volume-level="high"] .volume-high-icon {
+  display: block;
+}
+
+.video-container[data-volume-level="low"] .volume-low-icon {
+  display: block;
+}
+
+.video-container[data-volume-level="muted"] .volume-muted-icon {
+  display: block;
+}
+
+.volume-container {
+  display: flex;
+  align-items: center;
+}
+
+.volume-slider {
+  width: 0;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: 150ms;
+  margin-right: 5px;
+}
+
+.volume-slider.hover,
+.volume-slider:focus-within {
+  width: 70px;
+  transform: scaleX(1);
+}
+
+.duration-container {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-grow: 1;
+  font-family: "YouTube Noto", Roboto, Arial, Helvetica, sans-serif;
+}
+
+.video-controls-container .controls button.wide-btn {
+  width: 50px;
+}
+
+.timeline-container {
+  height: 7px;
+  margin-inline: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.watch-title {
+  font-family: "YouTube Sans", "Roboto", sans-serif !important;
+  font-size: 22px !important;
+  line-height: 30px !important;
+  font-weight: 600 !important;
+  white-space: normal !important;
+}
+
+.watch-views {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.mars_001 {
+  margin-right: 10px;
+}

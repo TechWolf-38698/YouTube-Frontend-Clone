@@ -1,7 +1,7 @@
 // Routing for youtube
 import React, { useEffect, useState } from "react";
 import UI from "../UI";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Home } from "../../Pages/YouTube/Home";
 import { Trending } from "../../Pages/YouTube/Trending";
 import { Shorts } from "../../Pages/YouTube/Shorts";
@@ -32,6 +32,7 @@ export const MyRouter = () => {
   });
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/youtube" />} />
       <Route path="youtube" element={<UI />}>
         <Route index element={<Home />} />
         <Route path="trending" element={<Trending />} />

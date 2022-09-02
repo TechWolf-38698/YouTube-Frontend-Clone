@@ -114,7 +114,7 @@ export default function UI() {
   const [hideMini, setHideMini] = useState(false);
   // const [user, setUser] = useState(undefined);
   const disptach = useDispatch();
-  const VideoURL = useSelector((state) => state.VideoURL);
+  const videoData = useSelector((state) => state.VideoURL);
   const user = useSelector((state) => state.LoggedInUser);
   // const [user, setUser] = useState(undefined);
 
@@ -525,7 +525,11 @@ export default function UI() {
         <DrawerHeader />
         <Outlet />
         <FileFormDialog />
-        <VideoDetailsFormDialog videoURL={VideoURL} user={user} />
+        {videoData ? (
+          <VideoDetailsFormDialog videoData={videoData} user={user} />
+        ) : (
+          <></>
+        )}
       </Box>
     </Box>
   );

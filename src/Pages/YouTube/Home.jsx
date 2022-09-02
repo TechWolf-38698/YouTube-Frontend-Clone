@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { HomeCardPreLoader, HomeCard } from "../../components/SmallComponents";
 import img from "../../images/black.png";
-import { baseUrl } from "../../Services/myAxios";
+import { baseUrl, contentUrl } from "../../Services/myAxios";
 
 export const Home = () => {
   const [data, setData] = useState([]);
@@ -16,7 +16,8 @@ export const Home = () => {
     setPageLoading(true);
     axios.get(`${baseUrl}/video/getall`).then((res) => {
       setPageLoading(false);
-      if (res.data !== "No Data Found") {
+      console.log(res.data[0]);
+      if (res.data.length !== 0) {
         let shuffled = res.data
           .map((value) => ({ value, sort: Math.random() }))
           .sort((a, b) => a.sort - b.sort)
@@ -39,7 +40,11 @@ export const Home = () => {
               {data.length !== 0 ? (
                 data.map((item, index) => (
                   <HomeCard
-                    img={item.thumbnail ? item.thumbnail : img}
+                    img={
+                      item.thumbnailUrl
+                        ? `${contentUrl}${item.thumbnailUrl}`
+                        : img
+                    }
                     title={item.title}
                     key={index}
                     createdAt={item.date}

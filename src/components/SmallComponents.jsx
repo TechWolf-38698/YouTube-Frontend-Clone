@@ -69,13 +69,19 @@ export const HomeCard = ({ img, title, channel, views, createdAt, url }) => {
       <div className="col-12 col-sm-6 col-md-4 col-xl-3 my-3">
         <Link to={url}>
           <div
+            className="d-flex justify-content-center"
             style={{
               width: "100%",
-              height: "auto",
+              maxHeight: "176.475px",
               backgroundColor: "black",
             }}
           >
-            <img src={Image} alt="" width="100%" />
+            <img
+              src={img}
+              style={{
+                maxHeight: "176.475px",
+              }}
+            />
           </div>
           <Box sx={{ display: "flex" }} className="my-2">
             <Box className="mr-2">
@@ -103,29 +109,41 @@ export const FileFormDialog = () => {
   const [file, setFile] = useState(undefined);
   const disptach = useDispatch();
   const open = useSelector((state) => state.OpenVideoDialog);
+  const user = useSelector((state) => state.LoggedInUser);
+  var form = new FormData();
 
   const Input = styled("input")({
     display: "none",
   });
+
+  const myFun = () => {
+    form.append("video", file[0]);
+    form.append("userId", user._id);
+    form.append("channelName", `${user.f_name} ${user.l_name}`);
+    form.append("title", `${file[0].name}`);
+    console.log(user._id, `${user.f_name} ${user.l_name}`, file[0].name);
+
+    axios
+      .post(`${baseUrl}/video/postVideo`, form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(
+        (res) => {
+          disptach({ type: "setVideoURL", payload: res.data.details.myVid });
+          // disptach({ type: "openVideoDetailsDialog" });
+          disptach({ type: "closeVideoDialog" });
+          console.log(res.data);
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+  };
+  const doNothing = () => {};
   useEffect(() => {
-    file
-      ? axios
-          .post(`${baseUrl}/video/postVideo`, file, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          .then(
-            (res) => {
-              disptach({ type: "setVideoURL", payload: res.data._path });
-              disptach({ type: "openVideoDetailsDialog" });
-              disptach({ type: "closeVideoDialog" });
-            },
-            (err) => {
-              console.log(err);
-            }
-          )
-      : console.log(file);
+    file ? myFun() : doNothing();
   }, [file]);
   return (
     <>
@@ -217,29 +235,33 @@ export const FileFormDialog = () => {
   );
 };
 
-export const VideoDetailsFormDialog = ({ videoURL }) => {
+export const VideoDetailsFormDialog = ({ videoData }) => {
   const scroll = "paper";
   const disptach = useDispatch();
-  const open = useSelector((state) => state.OpenVideoDetailsDialog);
   const user = useSelector((state) => state.LoggedInUser);
 
   const validationSchema = yup.object({
-    Title: yup.string("Enter the title of video").required("Title is required"),
-    Description: yup.string("Enter a Description"),
-    Visibility: yup.string("Select your Visibility").required("Select any one"),
+    title: yup.string("Enter the title of video").required("Title is required"),
+    description: yup.string("Enter a Description"),
+    visibility: yup.string("Select your Visibility").required("Select any one"),
     Playlist: yup.array("This should be an array"),
-    userId: yup.string(),
+    userId: yup.string().required(),
+    videoURL: yup.string().required(),
+    thumbnailUrl: yup.string().required(),
+    channelName: yup.string().required(),
   });
 
   const formik = useFormik({
     initialValues: {
-      Title: "Title of video",
-      Description: "",
-      Visibility: "public",
-      videoURL: videoURL,
-      userId: user ? user._id : null,
-      channelName: user ? user.f_name + " " + user.l_name : null,
+      title: "" || videoData.title,
+      description: "" || videoData.description,
+      visibility: "" || videoData.visibility,
+      videoURL: videoData.videoURL,
+      userId: videoData.userId,
+      channelName: videoData.channelName,
+      thumbnailUrl: videoData.thumbnailUrl,
     },
+    enableReinitialize: true,
     validationSchema: validationSchema,
     onSubmit: (e) => {
       axios
@@ -289,6 +311,7 @@ export const VideoDetailsFormDialog = ({ videoURL }) => {
   ];
 
   useEffect(() => {
+    console.log(videoData);
     if (personName !== []) {
       var b = [];
       // eslint-disable-next-line
@@ -297,14 +320,15 @@ export const VideoDetailsFormDialog = ({ videoURL }) => {
         b.push(c[0]._id);
       });
       setNames(b);
-      formik.setFieldValue("videoURL", videoURL);
-      formik.setFieldValue("userId", user ? user._id : user);
-      formik.setFieldValue(
-        "channelName",
-        user ? user.f_name + " " + user.l_name : user
-      );
+      // formik.setFieldValue("title", videoData.title);
+      // formik.setFieldValue("description", videoData.description);
+      // formik.setFieldValue("visibility", videoData.visibility);
+      // formik.setFieldValue("videoURL", videoData.videoURL);
+      // formik.setFieldValue("userId", videoData.userId);
+      // formik.setFieldValue("channelName", videoData.channelName);
+      // formik.setFieldValue("thumbnailUrl", videoData.thumbnailUrl);
     }
-  }, [personName, videoURL, user]);
+  }, [personName, videoData, user]);
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -319,7 +343,7 @@ export const VideoDetailsFormDialog = ({ videoURL }) => {
 
   return (
     <>
-      <Dialog fullWidth maxWidth="sm" open={open}>
+      <Dialog fullWidth maxWidth="sm" open={true}>
         <form onSubmit={formik.handleSubmit}>
           <DialogTitle>Details of video</DialogTitle>
           <DialogContent dividers={scroll === "paper"}>
@@ -333,7 +357,7 @@ export const VideoDetailsFormDialog = ({ videoURL }) => {
                     id="Title"
                     name="Title"
                     label="Title*"
-                    value={formik.values.Title}
+                    value={formik.values.title}
                     onChange={formik.handleChange}
                     autoFocus
                     autoComplete="off"
@@ -341,8 +365,8 @@ export const VideoDetailsFormDialog = ({ videoURL }) => {
                     variant="outlined"
                     fullWidth
                     type="text"
-                    error={formik.touched.Title && Boolean(formik.errors.Title)}
-                    helperText={formik.touched.Title && formik.errors.Title}
+                    error={formik.touched.title && Boolean(formik.errors.title)}
+                    helperText={formik.touched.title && formik.errors.title}
                   />
                 </div>
                 <div className="col-12 mt-3">
@@ -355,7 +379,7 @@ export const VideoDetailsFormDialog = ({ videoURL }) => {
                     type="text"
                     multiline
                     maxRows={4}
-                    value={formik.values.Description}
+                    value={formik.values.description}
                     onChange={formik.handleChange}
                   />
                 </div>
@@ -394,7 +418,7 @@ export const VideoDetailsFormDialog = ({ videoURL }) => {
                       aria-labelledby="demo-controlled-radio-buttons-group"
                       name="Visibility"
                       id="Visibility"
-                      value={formik.values.Visibility}
+                      value={formik.values.visibility}
                       onChange={formik.handleChange}
                     >
                       <FormControlLabel

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import VideoPlayer from "../../components/VideoPlayer";
-import { baseUrl } from "../../Services/myAxios";
+import { baseUrl, contentUrl } from "../../Services/myAxios";
 
 import axios from "axios";
 import {
@@ -52,7 +52,7 @@ export const Watch = () => {
           <div className="container-fluid">
             <div className="row">
               <div className={`${theaterMode ? "col-lg-12" : "col-lg-8"}`}>
-                <VideoPlayer videoURL={videoData.videoURL} />
+                <VideoPlayer videoURL={contentUrl + videoData.videoURL} />
 
                 <div className="row">
                   <div className={`${theaterMode ? "col-lg-8" : "col-lg-12"}`}>

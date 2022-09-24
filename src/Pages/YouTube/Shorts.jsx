@@ -6,7 +6,12 @@ export const Shorts = () => {
   }, []);
   return (
     <>
-      <h1>Shorts</h1>
+      <div
+        className="col d-flex justify-content-center align-items-center"
+        style={{ height: "80vh" }}
+      >
+        <h1 className="text-center text-muted">Coming Soon...</h1>
+      </div>
     </>
   );
 };

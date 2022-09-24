@@ -16,8 +16,8 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { useState } from "react";
 import * as yup from "yup";
-import { Navigate, useNavigate } from "react-router-dom";
-import {baseUrl} from "../../../Services/myAxios"
+import { useNavigate } from "react-router-dom";
+import { baseUrl } from "../../../Services/myAxios";
 
 const validationSchema = yup.object({
   f_name: yup.string("Enter your first name").required("Enter your first name"),
@@ -272,7 +272,7 @@ export const Signup = () => {
                 <div className="col-12 pr-0 pl-0 pt-5 mt-2 d-flex justify-content-between">
                   <Button
                     onClick={() => {
-                      navigate("/signin");
+                      navigate("/google/signin");
                     }}
                     size="small"
                     style={{ textTransform: "none" }}

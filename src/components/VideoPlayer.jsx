@@ -3,6 +3,7 @@ import { Slider, useTheme } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { MaterialUISwitch } from "./SmallComponents";
 
 function VideoPlayer({ videoURL }) {
   const theme = useTheme();
@@ -59,6 +60,9 @@ function VideoPlayer({ videoURL }) {
         break;
       case "l":
         skip(10);
+        break;
+      case "f5":
+        window.location.reload();
         break;
       default:
         console.log(key);
@@ -170,7 +174,7 @@ function VideoPlayer({ videoURL }) {
   }, [play, muted, volume]);
 
   useEffect(() => {
-    document.getElementById("video").play();
+    // document.getElementById("video").play();
   }, []);
 
   return (
@@ -315,6 +319,7 @@ function VideoPlayer({ videoURL }) {
             >
               {playBack}
             </button>
+            <MaterialUISwitch />
             <button
               className="mini-player-btn"
               onClick={() => {
@@ -374,9 +379,7 @@ function VideoPlayer({ videoURL }) {
           onLoadedData={(e) => {
             setDuration(formatDuration(e.target.duration));
             setMaxPosition(e.target.duration);
-            setTimeout(() => {
-              
-            }, (e.target.duration * 1000) / 2);
+            setTimeout(() => {}, (e.target.duration * 1000) / 2);
           }}
           onTimeUpdate={(e) => {
             setCurrentTime(formatDuration(e.target.currentTime));

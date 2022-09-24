@@ -43,7 +43,7 @@ export const MyRouter = () => {
         <Route path="watch-later" element={<WatchLater />} />
         <Route path="playlist" element={<PlayList />} />
         <Route path="liked-videos" element={<LikedVideos />} />
-        <Route path="channel" element={<Channel />} />
+        <Route path="channel/:id" element={<Channel />} />
         <Route path="settings" element={<Settings />} />
         <Route path="send-feedback" element={<SendFeedback />} />
         <Route path="your-videos" element={<YourVideos />} />

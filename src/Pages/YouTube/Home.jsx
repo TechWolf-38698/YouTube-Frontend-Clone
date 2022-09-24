@@ -1,5 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { HomeCardPreLoader, HomeCard } from "../../components/SmallComponents";
 import img from "../../images/black.png";
 import { baseUrl, contentUrl } from "../../Services/myAxios";
@@ -7,16 +9,24 @@ import { baseUrl, contentUrl } from "../../Services/myAxios";
 export const Home = () => {
   const [data, setData] = useState([]);
   const [pageLoading, setPageLoading] = useState(true);
+  const reload = useSelector((state) => state.ReloadHome);
+  const dispatch = useDispatch();
   useEffect(() => {
     document.getElementById("title").innerText = "YouTube";
     getAllVideos();
   }, []);
 
+  useEffect(() => {
+    if (reload) {
+      getAllVideos();
+      dispatch({ type: "reloadHome" });
+    }
+  }, [reload]);
+
   const getAllVideos = () => {
     setPageLoading(true);
     axios.get(`${baseUrl}/video/getall`).then((res) => {
-      setPageLoading(false);
-      console.log(res.data[0]);
+      console.log(res.data);
       if (res.data.length !== 0) {
         let shuffled = res.data
           .map((value) => ({ value, sort: Math.random() }))
@@ -24,6 +34,7 @@ export const Home = () => {
           .map(({ value }) => value);
         setData(shuffled);
       }
+      setPageLoading(false);
     });
   };
 
@@ -48,8 +59,9 @@ export const Home = () => {
                     title={item.title}
                     key={index}
                     createdAt={item.date}
-                    channel={item.channelName}
+                    channel={item.channel.f_name + " " + item.channel.l_name}
                     url={`/youtube/watch?v=${item._id}`}
+                    views={item.views.length}
                   />
                 ))
               ) : (

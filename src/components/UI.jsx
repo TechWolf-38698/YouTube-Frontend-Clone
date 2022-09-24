@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import yt_logo from "../images/yt_logo.png";
-// Imports for the Sidebar component
 import { styled, useTheme, alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
@@ -16,10 +15,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import InputBase from "@mui/material/InputBase";
-import Tooltip from "@mui/material/Tooltip";
-// eslint-disable-next-line
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
 import HomeIcon from "@mui/icons-material/Home";
 import LocalPlayIcon from "@mui/icons-material/LocalPlay";
 import SubscriptionsOutlinedIcon from "@mui/icons-material/SubscriptionsOutlined";
@@ -33,30 +28,21 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import AnnouncementOutlinedIcon from "@mui/icons-material/AnnouncementOutlined";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
-// Imports for header component
-
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-// eslint-disable-next-line
-import { Badge, Button } from "@mui/material";
-// eslint-disable-next-line
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
-// eslint-disable-next-line
+import { Button } from "@mui/material";
 import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined";
 import { useEffect } from "react";
-
-// Custom comopnents
 import { SidebarItem } from "./SidebarItem";
 import { SidebarHeading } from "./SidebarHeading";
 import SidebarAvatar from "./SidebarAvatar";
 import axios from "axios";
-import { MyAvatar } from "./MyAvatar";
-import { FileFormDialog, VideoDetailsFormDialog } from "./SmallComponents";
+import {
+  FileFormDialog,
+  PlaylistsModal,
+  VideoDetailsFormDialog,
+} from "./SmallComponents";
 import { useDispatch, useSelector } from "react-redux";
-import LogoutIcon from "@mui/icons-material/Logout";
 import { baseUrl } from "../Services/myAxios";
-
-// Funtion for Drawer...
+import AccountMenu from "./Test";
 
 const drawerWidth = 240;
 
@@ -112,12 +98,9 @@ export default function UI() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [hideMini, setHideMini] = useState(false);
-  // const [user, setUser] = useState(undefined);
   const disptach = useDispatch();
   const videoData = useSelector((state) => state.VideoURL);
   const user = useSelector((state) => state.LoggedInUser);
-  // const [user, setUser] = useState(undefined);
-
   const MyDrawer = hideMini
     ? Drawer
     : styled(MuiDrawer, {
@@ -143,10 +126,6 @@ export default function UI() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
-  // Drawer function ends here...
-
-  // Setting things for header Starts
   const Search = styled("div")(({ theme }) => ({
     position: "relative",
     borderRadius: theme.shape.borderRadius,
@@ -185,21 +164,6 @@ export default function UI() {
       },
     },
   }));
-
-  // Setting things for avatar menu
-
-  const [anchorElUser, setAnchorElUser] = useState(null);
-
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
-  // Setting things for header Ends
-
-  // Setting things for SidebarLinks starts
   const location = useLocation().pathname.split("/")[
     useLocation().pathname.split("/").length - 1
   ];
@@ -220,6 +184,21 @@ export default function UI() {
     }
   }, [location, hideMini, myLink, []]);
 
+  const [subscriptions, setSubscriptions] = useState([]);
+
+  const getSubscriptions = (uId) => {
+    axios
+      .get(`${baseUrl}/subs/getSubscriptions/${uId}`)
+      .then((res) => {
+        setSubscriptions(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  
+
   useEffect(() => {
     localStorage.getItem("_id")
       ? axios
@@ -227,6 +206,7 @@ export default function UI() {
           .then(
             (res) => {
               disptach({ type: "setLogin", payload: res.data._user });
+              getSubscriptions(res.data._user._id);
             },
             (err) => {
               console.log(err);
@@ -278,72 +258,10 @@ export default function UI() {
                 >
                   <UploadOutlinedIcon />
                 </IconButton>
-                {/* <IconButton
-                  size="large"
-                  aria-label="show 17 new notifications"
-                  color="inherit"
-                >
-                  <Badge badgeContent={5} color="error">
-                    <NotificationsOutlinedIcon />
-                  </Badge>
-                </IconButton> */}
               </Box>
 
               {/* Avatar Starts here */}
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Open settings">
-                  <IconButton
-                    onClick={handleOpenUserMenu}
-                    sx={{ ml: "12px", p: 0 }}
-                  >
-                    <MyAvatar channel={`${user.f_name} ${user.l_name}`} />
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: "45px" }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
-                >
-                  <MenuItem
-                    onClick={() => {
-                      handleCloseUserMenu();
-                      disptach({ type: "openVideoDialog" });
-                    }}
-                    style={{ width: "300px" }}
-                    sx={{ display: { sm: "flex", md: "none" } }}
-                  >
-                    <div className="mars_001">
-                      <UploadOutlinedIcon />
-                    </div>
-                    <Typography textAlign="center">Upload Video</Typography>
-                  </MenuItem>
-                  <Divider sx={{ display: { sm: "flex", md: "none" } }} />
-                  <MenuItem
-                    onClick={() => {
-                      handleCloseUserMenu();
-                      window.location.reload();
-                      localStorage.removeItem("_id");
-                    }}
-                    style={{ width: "300px" }}
-                  >
-                    <div className="mars_001">
-                      <LogoutIcon />
-                    </div>
-                    <Typography textAlign="center">Logout</Typography>
-                  </MenuItem>
-                </Menu>
-              </Box>
+              <AccountMenu />
             </>
           ) : (
             <Link to="/google/signin">
@@ -489,17 +407,25 @@ export default function UI() {
             </Link>
           </List>
           <Divider />
-          <List>
-            <SidebarHeading title="SUBSCRIPTIONS" open={open} />
-            <Link to="/youtube/channel">
-              <SidebarAvatar
-                name="Funky Wolf"
-                open={open}
-                myClass="SidebarLink channel "
-              />
-            </Link>
-          </List>
-          <Divider />
+          {subscriptions.length !== 0 ? (
+            <>
+              <List>
+                <SidebarHeading title="SUBSCRIPTIONS" open={open} />
+                {subscriptions.map((e, i) => (
+                  <Link to={`/youtube/channel/${e.channel._id}`} key={i}>
+                    <SidebarAvatar
+                      name={e.channel.f_name + " " + e.channel.l_name}
+                      open={open}
+                      myClass={`SidebarLink ${e.channel._id}`}
+                    />
+                  </Link>
+                ))}
+              </List>
+              <Divider />
+            </>
+          ) : (
+            <></>
+          )}
           <List>
             <Link to="/youtube/settings">
               <SidebarItem
@@ -525,6 +451,7 @@ export default function UI() {
         <DrawerHeader />
         <Outlet />
         <FileFormDialog />
+        <PlaylistsModal />
         {videoData ? (
           <VideoDetailsFormDialog videoData={videoData} user={user} />
         ) : (

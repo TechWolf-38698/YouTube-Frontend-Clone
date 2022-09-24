@@ -3,9 +3,11 @@ const URL = null;
 const VideoURL = (state = URL, action) => {
   switch (action.type) {
     case "setVideoURL":
-      return (state = action.payload);
+      state = action.payload;
+      return state;
     case "resetVideoURL":
-      return (state = null);
+      state = null;
+      return state;
     default:
       return state;
   }

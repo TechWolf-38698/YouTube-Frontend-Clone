@@ -1,7 +1,7 @@
 import { Avatar } from "@mui/material";
 import React from "react";
 
-export const MyAvatar = ({ img, channel, width, height }) => {
+export const MyAvatar = ({ img, channel, width, height, font }) => {
   function stringToColor(string) {
     let hash = 0;
     let i;
@@ -26,28 +26,18 @@ export const MyAvatar = ({ img, channel, width, height }) => {
     return {
       sx: {
         bgcolor: stringToColor(name),
+        height: height ? height : "40px",
+        width: width ? width : "40px",
       },
+      src: img,
       children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+      style: { fontSize: font ? font : "15px" },
     };
   }
 
   return (
     <>
-      {img ? (
-        <Avatar src={img} sx={{ width: 24, height: 24 }} />
-      ) : (
-        <Avatar
-          style={{
-            fontSize: "14px",
-            height: "36px",
-            width: "36px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          {...stringAvatar(channel)}
-        />
-      )}
+      <Avatar {...stringAvatar(channel)} />
     </>
   );
 };

@@ -12,7 +12,7 @@ export const Trending = () => {
   const reload = useSelector((state) => state.ReloadHome);
   const dispatch = useDispatch();
   useEffect(() => {
-    document.getElementById("title").innerText = "YouTube";
+    document.getElementById("title").innerText = "TechTube";
     getAllVideos();
   }, []);
 
@@ -56,7 +56,7 @@ export const Trending = () => {
                     key={index}
                     createdAt={item.date}
                     channel={item.channel.f_name + " " + item.channel.l_name}
-                    url={`/youtube/watch?v=${item._id}`}
+                    url={`/techtube/watch?v=${item._id}`}
                     views={item.views.length}
                   />
                 ))

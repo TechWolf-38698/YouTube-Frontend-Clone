@@ -319,7 +319,7 @@ function VideoPlayer({ videoURL }) {
             >
               {playBack}
             </button>
-            <MaterialUISwitch />
+            {/* <MaterialUISwitch /> */}
             <button
               className="mini-player-btn"
               onClick={() => {

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 export const Shorts = () => {
   useEffect(() => {
-    document.getElementById("title").innerText = "YouTube";
+    document.getElementById("title").innerText = "TechTube";
   }, []);
   return (
     <>

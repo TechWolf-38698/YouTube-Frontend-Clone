@@ -55,7 +55,7 @@ export const Password = () => {
           setAxiosError(undefined);
           setLoading(false);
           setUser(response.data);
-          navigate("/youtube");
+          navigate("/techtube");
         },
         function(error) {
           console.log(error.response);
@@ -89,7 +89,7 @@ export const Password = () => {
             <div className="myDiv">
               <h1 className="signin-form-h1">Sign in</h1>
               <div className="signin-form-subtitle">
-                <span>to YouTube</span>
+                <span>to TechTube</span>
               </div>
               <form
                 className="row justify-content-center align-items-center pr-4 pl-4 pt-4"

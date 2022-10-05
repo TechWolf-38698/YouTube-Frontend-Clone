@@ -1,16 +1,17 @@
+import { HistoryOutlined } from "@mui/icons-material";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { HistoryCard } from "../../components/SmallComponents";
+import { HistoryCard, LoginToSee } from "../../components/SmallComponents";
 import { baseUrl } from "../../Services/myAxios";
 
 export const History = () => {
   const user = useSelector((state) => state.LoggedInUser);
   const [data, setData] = useState([]);
   useEffect(() => {
-    document.getElementById("title").innerText = "History - YouTube";
+    document.getElementById("title").innerText = "History - TechTube";
 
     if (user) {
       axios
@@ -33,7 +34,7 @@ export const History = () => {
             {data.length !== 0 ? (
               <>
                 {data.map((e, i) => (
-                  <Link to={`/youtube/watch?v=${e.video._id}`}>
+                  <Link to={`/techtube/watch?v=${e.video._id}`}>
                     <HistoryCard
                       title={e.video.title}
                       channel={e.video.channel}
@@ -50,7 +51,13 @@ export const History = () => {
           </div>
         </>
       ) : (
-        <></>
+        <>
+          <LoginToSee
+            title={"Keep track of what you watch"}
+            subtitle="Watch history isn't viewable when signed out."
+            icon={<HistoryOutlined sx={{ fontSize: "70px", marginBottom: "20px" }} />}
+          />
+        </>
       )}
     </>
   );

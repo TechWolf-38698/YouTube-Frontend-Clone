@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 export const Settings = () => {
   useEffect(() => {
-    document.getElementById("title").innerText = "Settings - YouTube";
+    document.getElementById("title").innerText = "Settings - TechTube";
   }, []);
   return (
     <>

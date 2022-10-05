@@ -1,4 +1,4 @@
-// Routing for youtube
+// Routing for techtube
 import React, { useEffect, useState } from "react";
 import UI from "../UI";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -32,8 +32,8 @@ export const MyRouter = () => {
   });
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/youtube" />} />
-      <Route path="youtube" element={<UI />}>
+      <Route path="/" element={<Navigate to="/techtube" />} />
+      <Route path="techtube" element={<UI />}>
         <Route index element={<Home />} />
         <Route path="trending" element={<Trending />} />
         <Route path="shorts" element={<Shorts />} />
@@ -41,7 +41,7 @@ export const MyRouter = () => {
         <Route path="library" element={<Library />} />
         <Route path="history" element={<History />} />
         <Route path="watch-later" element={<WatchLater />} />
-        <Route path="playlist" element={<PlayList />} />
+        <Route path="playlist/:id" element={<PlayList />} />
         <Route path="liked-videos" element={<LikedVideos />} />
         <Route path="channel/:id" element={<Channel />} />
         <Route path="settings" element={<Settings />} />

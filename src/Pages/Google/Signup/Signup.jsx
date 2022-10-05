@@ -100,7 +100,7 @@ export const Signup = () => {
             <div className="myDiv">
               <h1 className="signin-form-h1">Create your Account</h1>
               <div className="signin-form-subtitle">
-                <span>for YouTube</span>
+                <span>for TechTube</span>
               </div>
               <form
                 className="row justify-content-center align-items-center px-3 pt-4"

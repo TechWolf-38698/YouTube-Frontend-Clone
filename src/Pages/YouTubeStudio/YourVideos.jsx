@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 export const YourVideos = () => {
   useEffect(() => {
-    document.getElementById("title").innerText = "Your Videos - YouTube";
+    document.getElementById("title").innerText = "Your Videos - TechTube";
   }, []);
   return (
     <>

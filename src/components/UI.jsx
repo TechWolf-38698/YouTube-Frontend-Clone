@@ -43,6 +43,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { baseUrl } from "../Services/myAxios";
 import AccountMenu from "./Test";
+import { AccessTime, AccountCircleOutlined } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -164,9 +165,10 @@ export default function UI() {
       },
     },
   }));
-  const location = useLocation().pathname.split("/")[
-    useLocation().pathname.split("/").length - 1
-  ];
+  const location =
+    useLocation().pathname.split("/")[
+      useLocation().pathname.split("/").length - 1
+    ];
   var myLink = document.getElementsByClassName("SidebarLink");
   useEffect(() => {
     for (let i = 0; i < myLink.length; i++) {
@@ -185,6 +187,10 @@ export default function UI() {
   }, [location, hideMini, myLink, []]);
 
   const [subscriptions, setSubscriptions] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+  const [threePlaylists, setThreePlaylist] = useState(3);
+  const reload = useSelector((e) => e.ReloadPlaylists);
+  const dispatch = useDispatch();
 
   const getSubscriptions = (uId) => {
     axios
@@ -197,7 +203,26 @@ export default function UI() {
       });
   };
 
-  
+  useEffect(() => {
+    if (reload) {
+      if (user) {
+        getPlaylists(user._id);
+      }
+      dispatch({ type: "reloadPlaylists", payload: false });
+    }
+  }, [reload]);
+
+  const getPlaylists = (uID) => {
+    axios
+      .get(`${baseUrl}/playlist/getByUserId/${uID}`)
+      .then((res) => {
+        setPlaylists(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   useEffect(() => {
     localStorage.getItem("_id")
@@ -207,6 +232,7 @@ export default function UI() {
             (res) => {
               disptach({ type: "setLogin", payload: res.data._user });
               getSubscriptions(res.data._user._id);
+              getPlaylists(res.data._user._id);
             },
             (err) => {
               console.log(err);
@@ -233,7 +259,7 @@ export default function UI() {
             <MenuIcon />
           </IconButton>
           {/* Header starts here */}
-          <Link to="/youtube">
+          <Link to="/techtube">
             <img src={yt_logo} alt="" style={{ width: "100px" }} />
           </Link>
           <Search>
@@ -267,10 +293,11 @@ export default function UI() {
             <Link to="/google/signin">
               <Button
                 variant="outlined"
-                style={{ textTransform: "none" }}
+                style={{ fontSize: "16px", fontWeight: 600 }}
                 type="submit"
+                startIcon={<AccountCircleOutlined />}
               >
-                Signin
+                Sign in
               </Button>
             </Link>
           )}
@@ -307,15 +334,15 @@ export default function UI() {
         </DrawerHeader>
         <Divider />
         <List>
-          <Link to="/youtube">
+          <Link to="/techtube">
             <SidebarItem
               icon={<HomeIcon />}
               title="Home"
               open={open}
-              myClass="SidebarLink youtube"
+              myClass="SidebarLink techtube"
             />
           </Link>
-          <Link to="/youtube/trending">
+          <Link to="/techtube/trending">
             <SidebarItem
               icon={<WhatshotIcon />}
               title="Trending"
@@ -323,7 +350,7 @@ export default function UI() {
               myClass="SidebarLink trending"
             />
           </Link>
-          <Link to="/youtube/shorts">
+          <Link to="/techtube/shorts">
             <SidebarItem
               icon={<LocalPlayIcon />}
               title="Shorts"
@@ -331,7 +358,7 @@ export default function UI() {
               myClass="SidebarLink shorts"
             />
           </Link>
-          <Link to="/youtube/subscriptions">
+          <Link to="/techtube/subscriptions">
             <SidebarItem
               icon={<SubscriptionsOutlinedIcon />}
               title="Subsriptions"
@@ -340,7 +367,7 @@ export default function UI() {
             />
           </Link>
           <div style={{ display: open ? "none" : "" }}>
-            <Link to="/youtube/library">
+            <Link to="/techtube/library">
               <SidebarItem
                 icon={<VideoLibraryOutlinedIcon />}
                 title="Library"
@@ -353,7 +380,7 @@ export default function UI() {
         <div style={{ display: open ? "" : "none" }}>
           <Divider />
           <List>
-            <Link to="/youtube/library">
+            <Link to="/techtube/library">
               <SidebarItem
                 icon={<VideoLibraryOutlinedIcon />}
                 title="Library"
@@ -361,7 +388,7 @@ export default function UI() {
                 myClass="SidebarLink library"
               />
             </Link>
-            <Link to="/youtube/history">
+            <Link to="/techtube/history">
               <SidebarItem
                 icon={<HistoryIcon />}
                 title="History"
@@ -370,41 +397,84 @@ export default function UI() {
               />
             </Link>
             {user ? (
-              <Link to="/youtube/your-videos">
-                <SidebarItem
-                  icon={<PlayCircleOutlinedIcon />}
-                  title="Your Videos"
-                  open={open}
-                  myClass="SidebarLink your-videos"
-                />
-              </Link>
+              <>
+                <Link to="/techtube/your-videos">
+                  <SidebarItem
+                    icon={<PlayCircleOutlinedIcon />}
+                    title="Your Videos"
+                    open={open}
+                    myClass="SidebarLink your-videos"
+                  />
+                </Link>
+                <Link to="/techtube/liked-videos">
+                  <SidebarItem
+                    icon={<ThumbUpOutlinedIcon />}
+                    title="Liked Videos"
+                    open={open}
+                    myClass="SidebarLink liked-videos"
+                  />
+                </Link>
+                <Link to="/techtube/watch-later">
+                  <SidebarItem
+                    icon={<AccessTime />}
+                    title="Watch Later"
+                    open={open}
+                    myClass="SidebarLink watch-later"
+                  />
+                </Link>
+                {playlists.length !== 0 ? (
+                  <>
+                    {playlists.slice(0, threePlaylists).map((e, i) => (
+                      <Link to={`/techtube/playlist/${e._id}`} key={i}>
+                        <SidebarItem
+                          icon={<PlaylistPlayOutlinedIcon />}
+                          title={e.name}
+                          open={open}
+                          myClass={`SidebarLink ${e._id}`}
+                        />
+                      </Link>
+                    ))}
+                    {threePlaylists === 3 ? (
+                      <>
+                        {playlists.length > 3 ? (
+                          <SidebarItem
+                            // icon={<PlaylistPlayOutlinedIcon />}
+                            title={"Show More"}
+                            open={open}
+                            myClass="SidebarLink"
+                            onClick={() => {
+                              setThreePlaylist(playlists.length);
+                            }}
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {playlists.length > 3 ? (
+                          <SidebarItem
+                            // icon={<PlaylistPlayOutlinedIcon />}
+                            title={"Show Less"}
+                            open={open}
+                            myClass="SidebarLink"
+                            onClick={() => {
+                              setThreePlaylist(3);
+                            }}
+                          />
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <></>
+                )}
+              </>
             ) : (
               <></>
             )}
-            <Link to="/youtube/watch-later">
-              <SidebarItem
-                icon={<WatchLaterOutlinedIcon />}
-                title="Watch Later"
-                open={open}
-                myClass="SidebarLink watch-later"
-              />
-            </Link>
-            <Link to="/youtube/liked-videos">
-              <SidebarItem
-                icon={<ThumbUpOutlinedIcon />}
-                title="Liked Videos"
-                open={open}
-                myClass="SidebarLink liked-videos"
-              />
-            </Link>
-            <Link to="/youtube/playlist">
-              <SidebarItem
-                icon={<PlaylistPlayOutlinedIcon />}
-                title="Playlists"
-                open={open}
-                myClass="SidebarLink playlist"
-              />
-            </Link>
           </List>
           <Divider />
           {subscriptions.length !== 0 ? (
@@ -412,7 +482,7 @@ export default function UI() {
               <List>
                 <SidebarHeading title="SUBSCRIPTIONS" open={open} />
                 {subscriptions.map((e, i) => (
-                  <Link to={`/youtube/channel/${e.channel._id}`} key={i}>
+                  <Link to={`/techtube/channel/${e.channel._id}`} key={i}>
                     <SidebarAvatar
                       name={e.channel.f_name + " " + e.channel.l_name}
                       open={open}
@@ -427,7 +497,7 @@ export default function UI() {
             <></>
           )}
           <List>
-            <Link to="/youtube/settings">
+            <Link to="/techtube/settings">
               <SidebarItem
                 icon={<SettingsOutlinedIcon />}
                 title="Settings"
@@ -435,7 +505,7 @@ export default function UI() {
                 myClass="SidebarLink settings"
               />
             </Link>
-            <Link to="/youtube/send-feedback">
+            <Link to="/techtube/send-feedback">
               <SidebarItem
                 icon={<AnnouncementOutlinedIcon />}
                 title="Send feedback"

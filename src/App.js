@@ -2,6 +2,7 @@ import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
 import React from "react";
 import { MyRouter } from "./components/Router/MyRouter";
+import { LoginModal } from "./components/SmallComponents";
 
 function App() {
   const darkTheme = createTheme({
@@ -17,6 +18,7 @@ function App() {
     <>
       <ThemeProvider theme={darkTheme}>
         <MyRouter />
+        <LoginModal />
       </ThemeProvider>
     </>
   );

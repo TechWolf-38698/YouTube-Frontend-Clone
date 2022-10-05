@@ -7,8 +7,10 @@ import VideoURL from "./VideoURL";
 
 import TheaterMode from "./TheaterMode";
 import { ReloadHome } from "./ReloadHome";
+import { ReloadPlaylists } from "./ReloadPlaylists";
 import OpenPlaylistModal from "./OpenPlaylistModal";
 import OpenPlaylistAdd from "./OpenPlaylistAdd";
+import LoginModal from "./LoginModal";
 
 export const rootReducer = combineReducers({
   OpenVideoDialog: OpenVideoDialog,
@@ -17,6 +19,8 @@ export const rootReducer = combineReducers({
   LoggedInUser: LoggedInUser,
   TheaterMode: TheaterMode,
   ReloadHome: ReloadHome,
+  ReloadPlaylists: ReloadPlaylists,
   PlaylistModal: OpenPlaylistModal,
   PlaylistAdd: OpenPlaylistAdd,
+  LoginModal: LoginModal,
 });

@@ -9,11 +9,13 @@ export const LikedVideos = () => {
   const user = useSelector((state) => state.LoggedInUser);
   const [data, setData] = useState([]);
   useEffect(() => {
-    document.getElementById("title").innerText = "Liked videos - YouTube";
+    document.getElementById("title").innerText = "Liked videos - TechTube";
     if (user) {
       axios
         .get(`${baseUrl}/videos/getLikedVideos/${user._id}`)
-        .then((res) => setData(res.data))
+        .then((res) => {
+          setData(res.data);
+        })
         .catch((err) => console.log(err));
     }
   }, [user]);
@@ -39,7 +41,7 @@ export const LikedVideos = () => {
     <>
       {data.videos ? (
         <PlaylistLayout
-          videos={data.videos.reverse()}
+          videos={data.videos}
           title="Liked Videos"
           Updated={data.lastUpdated}
         />

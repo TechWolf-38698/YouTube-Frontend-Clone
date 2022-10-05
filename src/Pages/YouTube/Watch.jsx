@@ -25,6 +25,7 @@ import { styled } from "@mui/material/styles";
 import * as yup from "yup";
 import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const hdate = require("human-date");
 export const Watch = () => {
@@ -46,6 +47,10 @@ export const Watch = () => {
   const [moreDes, setMoreDes] = useState(false);
   const [commentFocus, setCommentFocus] = useState(false);
   const [comments, setComments] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [totalVideos, setTotalVideos] = useState(0);
   const handleLike = () => {
     if (user) {
       setLiked(!liked);
@@ -79,6 +84,15 @@ export const Watch = () => {
             .catch((err) => console.log(err));
         }
       }
+    } else {
+      dispatch({
+        type: "openLoginModal",
+        payload: {
+          open: true,
+          title: "Like this video?",
+          subtitle: "Sign in to make your opinion count.",
+        },
+      });
     }
   };
   const handleDisLike = () => {
@@ -113,6 +127,15 @@ export const Watch = () => {
             .catch((err) => console.log(err));
         }
       }
+    } else {
+      dispatch({
+        type: "openLoginModal",
+        payload: {
+          open: true,
+          title: "Don't like this video?",
+          subtitle: "Sign in to make your opinion count.",
+        },
+      });
     }
   };
   const handleSub = () => {
@@ -141,6 +164,15 @@ export const Watch = () => {
           })
           .catch((err) => console.log(err));
       }
+    } else {
+      dispatch({
+        type: "openLoginModal",
+        payload: {
+          open: true,
+          title: "Want to subscribe to this channel?",
+          subtitle: "Sign in to subscribe to this channel.",
+        },
+      });
     }
   };
 
@@ -172,7 +204,7 @@ export const Watch = () => {
         setVideoData(res.data.Video);
         document.getElementById(
           "title"
-        ).innerText = `${res.data.Video.title} - Youtube`;
+        ).innerText = `${res.data.Video.title} - TechTube`;
         getViewCount(res.data.Video._id);
         getComments(res.data.Video._id);
         let { likes, disLikes } = res.data;
@@ -286,18 +318,47 @@ export const Watch = () => {
 
   const [data, setData] = useState();
   useEffect(() => {
-    axios.get(`${baseUrl}/video/getall`).then((res) => {
-      // setData(res.data);
-      let unshuffled = res.data;
-      let shuffled = unshuffled
-        .map((value) => ({ value, sort: Math.random() }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value);
-      let test = shuffled.filter((e) => e._id !== videoId);
-      setData(test);
-    });
+    getAllVideos();
   }, [videoId]);
 
+  const fetchMore = () => {
+    axios
+      .get(`${baseUrl}/video/getall?limit=10&page=${page + 1}`)
+      .then((res) => {
+        setPage(res.data.page);
+        setHasMore(res.data.hasMore);
+        if (res.data.videos.length !== 0) {
+          let shuffled = res.data.videos
+            .map((value) => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value);
+          setData(data.concat(shuffled));
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const getAllVideos = () => {
+    setData([]);
+    setPage(1);
+    setPageLoading(true);
+    axios.get(`${baseUrl}/video/getall?limit=10&page=${1}`).then((res) => {
+      setTotalVideos(res.data.totalVideos);
+      setPage(res.data.page);
+      setHasMore(res.data.hasMore);
+      if (res.data.videos.length !== 0) {
+        let shuffled = res.data.videos
+          .map((value) => ({ value, sort: Math.random() }))
+          .sort((a, b) => a.sort - b.sort)
+          .map(({ value }) => value);
+        let test = shuffled.filter((e) => e._id !== videoId);
+        setData(test);
+      }
+      setPageLoading(false);
+    });
+  };
   const SubsBtn = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText("#c00"),
     backgroundColor: "#c00",
@@ -401,6 +462,16 @@ export const Watch = () => {
                                 dispatch({
                                   type: "PlaylistModal",
                                   payload: videoData._id,
+                                });
+                              } else {
+                                dispatch({
+                                  type: "openLoginModal",
+                                  payload: {
+                                    open: true,
+                                    title: "Want to watch this again later?",
+                                    subtitle:
+                                      "Sign in to add this video to a playlist.",
+                                  },
                                 });
                               }
                             }}
@@ -576,11 +647,12 @@ export const Watch = () => {
                     )}
                     {comments.length !== 0 ? (
                       <>
-                        {comments.map((e) => (
+                        {comments.map((e, i) => (
                           <CommentCard
                             user={e.user.f_name + " " + e.user.l_name}
                             time={e.date}
                             comment={e.comment}
+                            key={i}
                           />
                         ))}
                       </>
@@ -589,20 +661,44 @@ export const Watch = () => {
                     )}
                   </div>
                   <div className={`${theaterMode ? "col-lg-4" : "d-none"} `}>
-                    {data !== undefined
-                      ? data.map((item, index) => (
-                          <SidebarVideoCard
-                            title={item.title}
-                            key={index}
-                            createdAt={item.date}
-                            channel={item.channelName}
-                            url={`/youtube/watch?v=${item._id}`}
-                            img={contentUrl + item.thumbnailUrl}
-                          />
-                        ))
-                      : Array.from(new Array(24)).map((item, index) => (
-                          <SidebarVideoCardPreLoader key={index} />
-                        ))}
+                    {!pageLoading ? (
+                      <>
+                        <InfiniteScroll
+                          dataLength={data.length}
+                          next={fetchMore}
+                          hasMore={hasMore}
+                          loader={
+                            <div className="col-12 text-center text-muted mt-5">
+                              <p>Loading...</p>
+                            </div>
+                          }
+                          endMessage={
+                            <div className="col-12 text-center text-muted mt-5">
+                              <p>No More Videos</p>
+                            </div>
+                          }
+                        >
+                          {data ? (
+                            data.map((item, index) => (
+                              <SidebarVideoCard
+                                title={item.title}
+                                key={index}
+                                createdAt={item.date}
+                                channel={item.channelName}
+                                url={`/techtube/watch?v=${item._id}`}
+                                img={contentUrl + item.thumbnailUrl}
+                              />
+                            ))
+                          ) : (
+                            <></>
+                          )}
+                        </InfiniteScroll>
+                      </>
+                    ) : (
+                      Array.from(new Array(24)).map((item, index) => (
+                        <SidebarVideoCardPreLoader key={index} />
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
@@ -616,7 +712,7 @@ export const Watch = () => {
                         channel={
                           item.channel.f_name + " " + item.channel.l_name
                         }
-                        url={`/youtube/watch?v=${item._id}`}
+                        url={`/techtube/watch?v=${item._id}`}
                         img={contentUrl + item.thumbnailUrl}
                         views={item.views.length}
                       />

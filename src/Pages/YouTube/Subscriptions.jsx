@@ -2,16 +2,17 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 // eslint-disable-next-line
-import { HomeCard, SubscriptionCard } from "../../components/SmallComponents";
+import SubscriptionsOutlinedIcon from "@mui/icons-material/SubscriptionsOutlined";
+import { LoginToSee, SubscriptionCard } from "../../components/SmallComponents";
 // eslint-disable-next-line
-import { baseUrl, contentUrl } from "../../Services/myAxios";
+import { baseUrl } from "../../Services/myAxios";
 export const Subscriptions = () => {
   const user = useSelector((state) => state.LoggedInUser);
   // eslint-disable-next-line
   const [pageLoading, setPageLoading] = useState(false);
   const [data, setData] = useState([]);
   useEffect(() => {
-    document.getElementById("title").innerText = "Subscriptions - YouTube";
+    document.getElementById("title").innerText = "Subscriptions - TechTube";
     if (user) {
       getData();
     }
@@ -58,7 +59,7 @@ export const Subscriptions = () => {
                   channel={e.channel.f_name + " " + e.channel.l_name}
                   createdAt={e.date}
                   title={e.title}
-                  url={`/youtube/watch?v=${e._id}`}
+                  url={`/TechTube/watch?v=${e._id}`}
                   img={`${contentUrl}${e.thumbnailUrl}`}
                   views={e.views.length}
                   key={i}
@@ -73,16 +74,15 @@ export const Subscriptions = () => {
     </>
   ) : (
     <>
-      <>
-        <div
-          className="col d-flex justify-content-center align-items-center"
-          style={{ height: "80vh" }}
-        >
-          <h1 className="text-center text-muted">
-            Please Login to see your Subscriptions
-          </h1>
-        </div>
-      </>
+      <LoginToSee
+        title={"Don’t miss new videos"}
+        subtitle="Sign in to see updates from your favorite TechTube channels"
+        icon={
+          <SubscriptionsOutlinedIcon
+            sx={{ fontSize: "70px", marginBottom: "20px" }}
+          />
+        }
+      />
     </>
   );
 };

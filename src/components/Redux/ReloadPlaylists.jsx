@@ -1,8 +1,8 @@
 var reload = false;
 
-export const ReloadHome = (state = reload, action) => {
+export const ReloadPlaylists = (state = reload, action) => {
   switch (action.type) {
-    case "reloadHome":
+    case "reloadPlaylists":
       return (state = action.payload);
     default:
       return state;

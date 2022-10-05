@@ -9,23 +9,25 @@ export const WatchLater = () => {
   const user = useSelector((e) => e.LoggedInUser);
   const [data, setData] = useState([]);
   useEffect(() => {
-    document.getElementById("title").innerText = "Watch Later - YouTube";
+    document.getElementById("title").innerText = "Watch Later - TechTube";
     if (user) {
       axios
         .get(`${baseUrl}/watchLater/getByUserIdWithRelation/${user._id}`)
         .then((res) => {
-          setData(res.data.reverse());
+          setData(res.data);
+          console.log(res.data.videos);
         })
         .catch((err) => console.log(err));
     }
   }, [user]);
+
   return (
     <>
       {data.length !== 0 ? (
         <PlaylistLayout
-          videos={data}
+          videos={data.videos}
           title="Watch Later"
-          Updated={data[0].date}
+          Updated={data.lastUpdated}
         />
       ) : (
         <>

@@ -9,6 +9,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
   // DialogContentText,
   DialogTitle,
   Divider,
@@ -27,6 +28,7 @@ import {
   RadioGroup,
   Select,
   Skeleton,
+  Slide,
   Switch,
   TextField,
 } from "@mui/material";
@@ -44,7 +46,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { Link } from "react-router-dom";
 import { baseUrl, contentUrl } from "../Services/myAxios";
-import { Close } from "@mui/icons-material";
+import { AccountCircleOutlined, Close } from "@mui/icons-material";
 const hdate = require("human-date");
 
 export const HomeCardPreLoader = () => {
@@ -539,7 +541,7 @@ export const SidebarVideoCardPreLoader = () => {
           <Skeleton
             variant="rectangular"
             width="100%"
-            height="107*px"
+            height="107px"
             animation={false}
           />
         </div>
@@ -814,7 +816,7 @@ export const PlaylistSideBar = ({
 
 export const PlaylistLayout = ({ videos, title, Updated }) => {
   useEffect(() => {
-    document.getElementById("title").innerText = "Liked videos - YouTube";
+    document.getElementById("title").innerText = "Liked videos - TechTube";
   }, []);
   return (
     <>
@@ -834,7 +836,7 @@ export const PlaylistLayout = ({ videos, title, Updated }) => {
                 key={i}
                 title={e.video.title}
                 channel={e.video.channel.f_name + " " + e.video.channel.l_name}
-                url={`/youtube/watch?v=${e.video._id}`}
+                url={`/techtube/watch?v=${e.video._id}`}
                 img={`${contentUrl}${e.video.thumbnailUrl}`}
                 colLg={2}
                 height={"100px"}
@@ -885,6 +887,7 @@ export const PlaylistsModal = () => {
   // eslint-disable-next-line
   const open = useSelector((e) => e.PlaylistModal);
   const user = useSelector((e) => e.LoggedInUser);
+  const reload = useSelector((e) => e.ReloadPlaylists);
   // const [open, setOpen] = React.useState(true);
   const handleClose = () => {
     dispatch({ type: "PlaylistModal", payload: null });
@@ -894,6 +897,14 @@ export const PlaylistsModal = () => {
     getWatchLater();
     getPlaylistVideos();
   }, [open, user]);
+
+  useEffect(() => {
+    if (reload) {
+      getWatchLater();
+      getPlaylistVideos();
+      dispatch({ type: "reloadPlaylists", payload: false });
+    }
+  }, [reload]);
 
   // useEffect(() => {
   //   console.log(data);
@@ -974,6 +985,7 @@ export const PlaylistsModal = () => {
     axios
       .post(`${baseUrl}/playlist/video/toggle`, payload)
       .then((res) => {
+        console.log("works");
         getPlaylistVideos();
       })
       .catch((err) => {
@@ -1092,7 +1104,10 @@ export const PlaylistAddForm = () => {
   }, [open]);
 
   const validationSchema = yup.object({
-    name: yup.string("Enter the title of video").required("Name is required"),
+    name: yup
+      .string("Enter the title of video")
+      .required("Name is required")
+      .matches(/([\S]+[\s]*)*[\S]+/g, "Please Enter a valid name."),
     visibility: yup.string("Select your Visibility").required("Select any one"),
     user: yup.string("User").required("User is Required"),
   });
@@ -1107,8 +1122,13 @@ export const PlaylistAddForm = () => {
     onSubmit: (e) => {
       console.log(e);
       axios
-        .post(`${baseUrl}/playlist/create`, e)
+        .post(`${baseUrl}/playlist/create`, {
+          name: e.name.trim(),
+          visibility: e.visibility,
+          user: e.user,
+        })
         .then((res) => {
+          dispatch({ type: "reloadPlaylists", payload: true });
           console.log(res);
         })
         .catch((err) => {
@@ -1118,7 +1138,6 @@ export const PlaylistAddForm = () => {
       handleClose();
     },
   });
-
   return (
     <div>
       <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth="sm">
@@ -1130,7 +1149,10 @@ export const PlaylistAddForm = () => {
             label="Name"
             variant="outlined"
             className="w-100 mb-3 mt-3"
+            error={Boolean(form.errors.name) && form.touched.name}
+            helperText={(form.touched.name && form.errors.name) || ""}
             value={form.values.name}
+            onBlur={form.handleBlur}
             onChange={form.handleChange}
           />
           <FormControl fullWidth>
@@ -1155,5 +1177,82 @@ export const PlaylistAddForm = () => {
         </DialogActions>
       </Dialog>
     </div>
+  );
+};
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+export const LoginModal = () => {
+  const [open, setOpen] = React.useState(false);
+  const data = useSelector((e) => e.LoginModal);
+  const dispatch = useDispatch();
+
+  const handleClose = () => {
+    setOpen(false);
+    dispatch({ type: "closeLoginModal" });
+  };
+
+  return (
+    <div>
+      {/* <Button variant="outlined" onClick={handleClickOpen}>
+        Slide in alert dialog
+      </Button> */}
+      <Dialog
+        open={Boolean(data)}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={handleClose}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        {Boolean(data) ? (
+          <>
+            <DialogTitle style={{ width: "400px" }}>{data.title}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description">
+                {data.subtitle}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Link to="/google/signin">
+                <Button onClick={handleClose}>SIGN IN</Button>
+              </Link>
+            </DialogActions>
+          </>
+        ) : (
+          <></>
+        )}
+      </Dialog>
+    </div>
+  );
+};
+
+export const LoginToSee = ({ title, subtitle, icon }) => {
+  return (
+    <>
+      <div className="container-fluid">
+        <div
+          className="row justify-content-center align-items-center"
+          style={{ height: "80vh" }}
+        >
+          <div className="col-12 text-center">
+            {icon}
+            <h1 className="">{title}</h1>
+            <p>{subtitle}</p>
+            <Link to="/google/signin">
+              <Button
+                variant="outlined"
+                style={{ fontSize: "16px", fontWeight: 600 }}
+                type="submit"
+                startIcon={<AccountCircleOutlined />}
+              >
+                Sign in
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };

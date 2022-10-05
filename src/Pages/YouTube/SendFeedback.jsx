@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 export const SendFeedback = () => {
   useEffect(()=>{
-    document.getElementById("title").innerText="Send Feedback - YouTube";
+    document.getElementById("title").innerText="Send Feedback - TechTube";
   }, []);
   return (
     <>

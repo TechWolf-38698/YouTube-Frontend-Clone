@@ -20,7 +20,7 @@ export const Channel = () => {
   useEffect(() => {
     if (channel) {
       document.getElementById("title").innerText =
-        channel.f_name + " " + channel.l_name + " - YouTube";
+        channel.f_name + " " + channel.l_name + " - TechTube";
     }
   }, [channel]);
   return (

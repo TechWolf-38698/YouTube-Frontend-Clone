@@ -6,9 +6,18 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export const SidebarItem = ({ icon, title, open, myClass }) => {
+export const SidebarItem = ({ icon, title, open, myClass, onClick }) => {
   return (
-    <ListItem disablePadding sx={{ display: "block" }} className={`${myClass}`}>
+    <ListItem
+      disablePadding
+      sx={{ display: "block" }}
+      className={`${myClass}`}
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
+    >
       <ListItemButton
         sx={{
           minHeight: 48,

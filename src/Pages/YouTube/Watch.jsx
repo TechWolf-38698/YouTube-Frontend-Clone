@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import VideoPlayer from "../../components/VideoPlayer";
 import { baseUrl, contentUrl } from "../../Services/myAxios";
 
@@ -537,7 +537,11 @@ export const Watch = () => {
                             channel={`${videoData.channel.f_name} ${videoData.channel.l_name}`}
                           />
                           <div className="px-2">
-                            <p className="mars_002">{`${videoData.channel.f_name} ${videoData.channel.l_name}`}</p>
+                            <Link
+                              to={`/techtube/channel/${videoData.channel._id}?t=0`}
+                            >
+                              <p className="mars_002">{`${videoData.channel.f_name} ${videoData.channel.l_name}`}</p>
+                            </Link>
                             <p className="mars_003">{subCount} Subscribers</p>
                           </div>
                         </div>

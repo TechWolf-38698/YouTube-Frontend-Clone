@@ -40,11 +40,11 @@ export const Subscriptions = () => {
   return user ? (
     <>
       <div className="container">
-        <h5 className="mb-4" style={{ fontWeight: 600 }}>
-          Subscription
-        </h5>
         {data.length !== 0 ? (
           <>
+            <h5 className="mb-4" style={{ fontWeight: 600 }}>
+              Subscription
+            </h5>
             {data.map((e, i) => (
               <SubscriptionCard
                 channel={e.channel}
@@ -68,7 +68,14 @@ export const Subscriptions = () => {
             </div> */}
           </>
         ) : (
-          <></>
+          <>
+            <div
+              className="col d-flex justify-content-center align-items-center"
+              style={{ height: "80vh" }}
+            >
+              <h1 className="text-center text-muted">No Channels Found</h1>
+            </div>
+          </>
         )}
       </div>
     </>

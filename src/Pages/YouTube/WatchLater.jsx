@@ -15,7 +15,7 @@ export const WatchLater = () => {
         .get(`${baseUrl}/watchLater/getByUserIdWithRelation/${user._id}`)
         .then((res) => {
           setData(res.data);
-          console.log(res.data.videos);
+          console.log(res.data);
         })
         .catch((err) => console.log(err));
     }
@@ -23,7 +23,7 @@ export const WatchLater = () => {
 
   return (
     <>
-      {data.length !== 0 ? (
+      {data.videos ? (
         <PlaylistLayout
           videos={data.videos}
           title="Watch Later"

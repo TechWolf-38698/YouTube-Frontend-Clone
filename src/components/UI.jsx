@@ -97,7 +97,7 @@ const AppBar = styled(MuiAppBar, {
 
 export default function UI() {
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [hideMini, setHideMini] = useState(false);
   const disptach = useDispatch();
   const videoData = useSelector((state) => state.VideoURL);
@@ -217,7 +217,6 @@ export default function UI() {
       .get(`${baseUrl}/playlist/getByUserId/${uID}`)
       .then((res) => {
         setPlaylists(res.data);
-        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -262,7 +261,7 @@ export default function UI() {
           <Link to="/techtube">
             <img src={yt_logo} alt="" style={{ width: "100px" }} />
           </Link>
-          <Search>
+          {/* <Search>
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -270,7 +269,7 @@ export default function UI() {
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
             />
-          </Search>
+          </Search> */}
           <Box sx={{ flexGrow: 1 }} />
           {user ? (
             <>
@@ -350,14 +349,14 @@ export default function UI() {
               myClass="SidebarLink trending"
             />
           </Link>
-          <Link to="/techtube/shorts">
+          {/* <Link to="/techtube/shorts">
             <SidebarItem
               icon={<LocalPlayIcon />}
               title="Shorts"
               open={open}
               myClass="SidebarLink shorts"
             />
-          </Link>
+          </Link> */}
           <Link to="/techtube/subscriptions">
             <SidebarItem
               icon={<SubscriptionsOutlinedIcon />}
@@ -482,7 +481,7 @@ export default function UI() {
               <List>
                 <SidebarHeading title="SUBSCRIPTIONS" open={open} />
                 {subscriptions.map((e, i) => (
-                  <Link to={`/techtube/channel/${e.channel._id}`} key={i}>
+                  <Link to={`/techtube/channel/${e.channel._id}?t=0`} key={i}>
                     <SidebarAvatar
                       name={e.channel.f_name + " " + e.channel.l_name}
                       open={open}
@@ -491,29 +490,32 @@ export default function UI() {
                   </Link>
                 ))}
               </List>
-              <Divider />
+              {/* <Divider /> */}
             </>
           ) : (
             <></>
           )}
-          <List>
-            <Link to="/techtube/settings">
-              <SidebarItem
-                icon={<SettingsOutlinedIcon />}
-                title="Settings"
-                open={open}
-                myClass="SidebarLink settings"
-              />
-            </Link>
-            <Link to="/techtube/send-feedback">
-              <SidebarItem
-                icon={<AnnouncementOutlinedIcon />}
-                title="Send feedback"
-                open={open}
-                myClass="SidebarLink send-feedback"
-              />
-            </Link>
-          </List>
+          {
+            <List>
+              <Divider />
+              <Link to="/techtube/settings">
+                <SidebarItem
+                  icon={<SettingsOutlinedIcon />}
+                  title="Settings"
+                  open={open}
+                  myClass="SidebarLink settings"
+                />
+              </Link>
+              {/* <Link to="/techtube/send-feedback">
+                <SidebarItem
+                  icon={<AnnouncementOutlinedIcon />}
+                  title="Send feedback"
+                  open={open}
+                  myClass="SidebarLink send-feedback"
+                />
+              </Link> */}
+            </List>
+          }
         </div>
       </MyDrawer>
 

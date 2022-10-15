@@ -27,7 +27,14 @@ export const PlayList = ({ title }) => {
           />
         </>
       ) : (
-        <>Hello</>
+        <>
+          <div
+            className="col d-flex justify-content-center align-items-center"
+            style={{ height: "80vh" }}
+          >
+            <h1 className="text-center text-muted">No Videos Found</h1>
+          </div>
+        </>
       )}
     </>
   );

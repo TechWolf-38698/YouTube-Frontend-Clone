@@ -11,6 +11,7 @@ import { ReloadPlaylists } from "./ReloadPlaylists";
 import OpenPlaylistModal from "./OpenPlaylistModal";
 import OpenPlaylistAdd from "./OpenPlaylistAdd";
 import LoginModal from "./LoginModal";
+import { ReloadMyVideos } from "./ReloadMyVideos";
 
 export const rootReducer = combineReducers({
   OpenVideoDialog: OpenVideoDialog,
@@ -23,4 +24,5 @@ export const rootReducer = combineReducers({
   PlaylistModal: OpenPlaylistModal,
   PlaylistAdd: OpenPlaylistAdd,
   LoginModal: LoginModal,
+  ReloadMyVideos: ReloadMyVideos,
 });

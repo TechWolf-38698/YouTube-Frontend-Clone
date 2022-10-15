@@ -46,7 +46,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import { Link } from "react-router-dom";
 import { baseUrl, contentUrl } from "../Services/myAxios";
-import { AccountCircleOutlined, Close } from "@mui/icons-material";
+import { AccountCircleOutlined, Close, History } from "@mui/icons-material";
 const hdate = require("human-date");
 
 export const HomeCardPreLoader = () => {
@@ -289,7 +289,8 @@ export const VideoDetailsFormDialog = ({ videoData }) => {
           (res) => {
             disptach({ type: "setVideoURL", payload: null });
             disptach({ type: "closeVideoDetailsDialog" });
-            disptach({ type: "reloadHome" });
+            disptach({ type: "reloadHome", payload: true });
+            disptach({ type: "reloadMyVideos", payload: true });
             console.log(res);
             formik.resetForm();
           },
@@ -398,7 +399,7 @@ export const VideoDetailsFormDialog = ({ videoData }) => {
                     onChange={formik.handleChange}
                   />
                 </div>
-                <div className="col-12 mt-3">
+                <div className="col-12 mt-3 d-none">
                   <FormControl fullWidth>
                     <InputLabel id="demo-multiple-checkbox-label">
                       Playlists
@@ -627,7 +628,6 @@ export const SubscriptionCard = ({ channel, user, subs }) => {
   const handleSub = () => {
     if (user) {
       if (!subscribed) {
-        console.log("added");
         axios
           .post(`${baseUrl}/subs/add`, {
             channel: channel._id,
@@ -655,15 +655,13 @@ export const SubscriptionCard = ({ channel, user, subs }) => {
   };
   useEffect(() => {
     setSubCount(subs.length);
-    if (subs.length > 0) {
-      for (let i = 0; i < subs.length; i++) {
-        const e = subs[i];
-        if (e.user === user._id) {
-          setSubscribed(true);
-          break;
-        } else {
-          setSubscribed(false);
-        }
+    for (let i = 0; i < subs.length; i++) {
+      const e = subs[i];
+      if (e.user === user._id) {
+        setSubscribed(true);
+        break;
+      } else {
+        setSubscribed(false);
       }
     }
   }, []);
@@ -679,10 +677,12 @@ export const SubscriptionCard = ({ channel, user, subs }) => {
               channel={`${channel.f_name} ${channel.l_name}`}
             />
             <div className="px-5">
-              <p
-                className="mars_002"
-                style={{ fontSize: "20px" }}
-              >{`${channel.f_name} ${channel.l_name}`}</p>
+              <Link to={`/techtube/channel/${channel._id}?t=0`}>
+                <p
+                  className="mars_002"
+                  style={{ fontSize: "20px" }}
+                >{`${channel.f_name} ${channel.l_name}`}</p>
+              </Link>
               <p className="mars_003" style={{ fontSize: "16px" }}>
                 {subCount} Subscribers
               </p>
@@ -820,33 +820,41 @@ export const PlaylistLayout = ({ videos, title, Updated }) => {
   }, []);
   return (
     <>
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-lg-3">
-            <PlaylistSideBar
-              img={contentUrl + videos[0].video.thumbnailUrl}
-              playListTitle={title}
-              videosCount={videos.length}
-              lastUpdated={Updated}
-            />
+      {videos.length !== 0 ? (
+        <>
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-lg-3">
+                <PlaylistSideBar
+                  img={contentUrl + videos[0].video.thumbnailUrl}
+                  playListTitle={title}
+                  videosCount={videos.length}
+                  lastUpdated={Updated}
+                />
+              </div>
+              <div className="col-lg-9">
+                {videos.map((e, i) => (
+                  <SidebarVideoCard
+                    key={i}
+                    title={e.video.title}
+                    channel={
+                      e.video.channel.f_name + " " + e.video.channel.l_name
+                    }
+                    url={`/techtube/watch?v=${e.video._id}`}
+                    img={`${contentUrl}${e.video.thumbnailUrl}`}
+                    colLg={2}
+                    height={"100px"}
+                    views={e.video.views.length}
+                    createdAt={e.video.date}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="col-lg-9">
-            {videos.map((e, i) => (
-              <SidebarVideoCard
-                key={i}
-                title={e.video.title}
-                channel={e.video.channel.f_name + " " + e.video.channel.l_name}
-                url={`/techtube/watch?v=${e.video._id}`}
-                img={`${contentUrl}${e.video.thumbnailUrl}`}
-                colLg={2}
-                height={"100px"}
-                views={e.video.views.length}
-                createdAt={e.video.date}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
@@ -1255,4 +1263,102 @@ export const LoginToSee = ({ title, subtitle, icon }) => {
       </div>
     </>
   );
+};
+
+export const LibraryCard = ({ img, title, channel, views, createdAt, url }) => {
+  let date = hdate.relativeTime(createdAt);
+  return (
+    <>
+      <div className="col-12 col-sm-6 col-md-4 col-xl-3 pl-1 pr-1">
+        <Link to={url}>
+          <div
+            className="d-flex justify-content-center"
+            style={{
+              width: "100%",
+              height: "130px",
+              backgroundColor: "black",
+            }}
+          >
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                backgroundImage: `url(${img ? img : Image})`,
+                backgroundPosition: "center",
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+              }}
+            ></div>
+          </div>
+          <Box sx={{ display: "flex" }} className="my-2">
+            <Box sx={{ width: "100%" }}>
+              {" "}
+              <Box sx={{ pr: 2 }}>
+                <p className="home-video-title mb-1">{title}</p>
+                <p className="home-channel-name m-0">{channel}</p>
+                <p className="home-channel-name m-0">{`${views} ${
+                  views === 1 ? "view" : "views"
+                } • ${date}`}</p>
+              </Box>
+            </Box>
+          </Box>
+        </Link>
+      </div>
+    </>
+  );
+};
+
+export const LibraryDataGrid = ({ title, icon, data, count }) => {
+  return (
+    <>
+      <div className="row mb-5">
+        <div className="col-12">
+          <h5 className="mb-4" style={{ fontWeight: 600 }}>
+            {icon} {title}{" "}
+            <span
+              style={{ color: "#aaa", fontWeight: "normal", fontSize: "16px" }}
+              className="ml-2"
+            >
+              {count}
+            </span>
+          </h5>
+        </div>
+        <div className="col-12">
+          <div className="row">
+            {data.length !== 0 ? (
+              <>
+                {data.map((e, i) => (
+                  <LibraryCard
+                    key={i}
+                    channel={`${e.video.channel.f_name} ${e.video.channel.l_name}`}
+                    url={`/techtube/watch?v=${e.video._id}`}
+                    title={e.video.title}
+                    views={e.video.views.length}
+                    createdAt={e.video.date}
+                    img={contentUrl + e.video.thumbnailUrl}
+                  />
+                ))}
+              </>
+            ) : (
+              <>
+                <div className="col-12 d-flex justify-content-center align-items-center">
+                  <h1 className="text-center text-muted">
+                    No Videos Available
+                  </h1>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export const MyCount = ({ arr, state }) => {
+  const [final, setFinal] = useState([]);
+  useEffect(() => {
+    setFinal(arr.filter((e) => e.state === state));
+  }, [arr, state]);
+  return final.length;
 };

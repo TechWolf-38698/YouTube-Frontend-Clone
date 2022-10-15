@@ -36,22 +36,42 @@ export const MyRouter = () => {
       <Route path="techtube" element={<UI />}>
         <Route index element={<Home />} />
         <Route path="trending" element={<Trending />} />
-        <Route path="shorts" element={<Shorts />} />
+        {/* <Route path="shorts" element={<Shorts />} /> */}
+        <Route path="your-videos" element={<YourVideos />} />
         <Route path="subscriptions" element={<Subscriptions />} />
         <Route path="library" element={<Library />} />
         <Route path="history" element={<History />} />
-        <Route path="watch-later" element={<WatchLater />} />
         <Route path="playlist/:id" element={<PlayList />} />
-        <Route path="liked-videos" element={<LikedVideos />} />
+
+        {user ? (
+          <>
+            <Route path="watch-later" element={<WatchLater />} />
+            <Route path="liked-videos" element={<LikedVideos />} />
+          </>
+        ) : (
+          <></>
+        )}
+
         <Route path="channel/:id" element={<Channel />} />
         <Route path="settings" element={<Settings />} />
-        <Route path="send-feedback" element={<SendFeedback />} />
-        <Route path="your-videos" element={<YourVideos />} />
+        {/* <Route path="send-feedback" element={<SendFeedback />} /> */}
         <Route path="watch" element={<Watch />} />
       </Route>
       {user ? (
         <Route path="google">
-          <Route path="*" element={<div>You are already Logged in</div>} />
+          <Route
+            path="*"
+            element={
+              <div
+                className="col d-flex justify-content-center align-items-center"
+                style={{ height: "100vh" }}
+              >
+                <h1 className="text-center text-danger text-uppercase">
+                  You are already Logged in.
+                </h1>
+              </div>
+            }
+          />
         </Route>
       ) : (
         <Route path="google">
@@ -62,7 +82,19 @@ export const MyRouter = () => {
           <Route path="signup" element={<Signup />} />
         </Route>
       )}
-      <Route path="*" element={<div>Error 404 page not found</div>} />
+      <Route
+        path="*"
+        element={
+          <div
+            className="col d-flex justify-content-center align-items-center"
+            style={{ height: "100vh" }}
+          >
+            <h1 className="text-center text-danger text-uppercase">
+              404 Page Not Found
+            </h1>
+          </div>
+        }
+      />
     </Routes>
   );
 };

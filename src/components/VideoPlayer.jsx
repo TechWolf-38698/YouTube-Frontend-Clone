@@ -7,7 +7,7 @@ import { MaterialUISwitch } from "./SmallComponents";
 
 function VideoPlayer({ videoURL }) {
   const theme = useTheme();
-  const [play, setPlay] = useState(false);
+  const [play, setPlay] = useState(true);
   // const [theaterMode, setTheaterMode] = useState(false);
   const [miniPlayer, setMiniPlayer] = useState(false);
   const [volume, setVolume] = useState(10);

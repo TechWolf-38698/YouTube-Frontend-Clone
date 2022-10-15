@@ -31,7 +31,7 @@ export const MyAvatar = ({ img, channel, width, height, font }) => {
       },
       src: img,
       children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
-      style: { fontSize: font ? font : "15px" },
+      style: { fontSize: font ? font : "15px", textTransform: "uppercase" },
     };
   }
 

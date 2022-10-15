@@ -293,11 +293,19 @@ a:focus {
   font-family: "Roboto", "Arial", sans-serif !important;
   /* overflow: hidden; */
   /* -webkit-line-clamp: 2; */
-  display: -webkit-box;
+  display: -webkit-box !important;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
   white-space: pre-line;
   color: #e9e9e9;
+}
+
+.yVideos-video-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .mars_001 {

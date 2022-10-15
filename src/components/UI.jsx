@@ -496,25 +496,25 @@ export default function UI() {
             <></>
           )}
           {
-            <List>
-              <Divider />
-              <Link to="/techtube/settings">
-                <SidebarItem
-                  icon={<SettingsOutlinedIcon />}
-                  title="Settings"
-                  open={open}
-                  myClass="SidebarLink settings"
-                />
-              </Link>
-              {/* <Link to="/techtube/send-feedback">
-                <SidebarItem
-                  icon={<AnnouncementOutlinedIcon />}
-                  title="Send feedback"
-                  open={open}
-                  myClass="SidebarLink send-feedback"
-                />
-              </Link> */}
-            </List>
+            // <List>
+            //   {/* <Divider />
+            //   <Link to="/techtube/settings">
+            //     <SidebarItem
+            //       icon={<SettingsOutlinedIcon />}
+            //       title="Settings"
+            //       open={open}
+            //       myClass="SidebarLink settings"
+            //     />
+            //   </Link> */}
+            //   {/* <Link to="/techtube/send-feedback">
+            //     <SidebarItem
+            //       icon={<AnnouncementOutlinedIcon />}
+            //       title="Send feedback"
+            //       open={open}
+            //       myClass="SidebarLink send-feedback"
+            //     />
+            //   </Link> */}
+            // </List>
           }
         </div>
       </MyDrawer>

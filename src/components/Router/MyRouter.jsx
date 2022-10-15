@@ -53,7 +53,7 @@ export const MyRouter = () => {
         )}
 
         <Route path="channel/:id" element={<Channel />} />
-        <Route path="settings" element={<Settings />} />
+        {/* <Route path="settings" element={<Settings />} /> */}
         {/* <Route path="send-feedback" element={<SendFeedback />} /> */}
         <Route path="watch" element={<Watch />} />
       </Route>
